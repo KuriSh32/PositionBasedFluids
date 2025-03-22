@@ -6,6 +6,7 @@ in vec3 aColor;
 out vec4 FragColor;
 
 vec2 POINT_CENTER = vec2(0.5, 0.5);
+uniform mat4 projection;
 uniform mat4 viewMatrixInverseTranspose;
 uniform float POINT_SIZE;
 
@@ -30,6 +31,9 @@ void main() {
     normalViewSpace.z = sqrt(1.0 - xy_length);
 
     vec3 fragPosViewSpace = viewSpacePos + normalViewSpace * POINT_SIZE;
+    vec4 fragPosClipSpace = projection * vec4(fragPosViewSpace, 1.0);
+
+    gl_FragDepth = fragPosClipSpace.z / fragPosClipSpace.w;
 
     vec3 lightDir = normalize((viewMatrixInverseTranspose * vec4(light.direction, 0.0)).xyz);
     vec3 viewDir = normalize(-fragPosViewSpace);
@@ -46,5 +50,6 @@ void main() {
     vec3 result = (ambient + diffuse + specular) * aColor;
 
     // FragColor = vec4(normal, 1.0);
+    // FragColor = vec4(vec3(gl_FragDepth), 1.0);
     FragColor = vec4(result, 1.0);
 }
