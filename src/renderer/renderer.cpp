@@ -93,10 +93,6 @@ namespace renderer {
     unsigned int particleVAO;
     unsigned int particleVBO;
     Shader particleShader;
-    
-    // FPS
-    int deltaTimeCounter = 0;
-    const int DELTA_TIME_COUNTER_MAX = 30;
 
     int renderInitSkybox() {
         glEnable(GL_DEPTH_TEST);
@@ -189,9 +185,8 @@ namespace renderer {
         mat4 projection = perspective(radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         particleShader.setMat4("projection", projection);       
 
-        // matrix.inverse.transpose.inverse = matrix.transpose
-        mat4 viewMatrixTranspose = transpose(view);
-        particleShader.setMat4("viewMatrixTranspose", viewMatrixTranspose);
+        mat4 viewMatrixInverseTranspose = transpose(inverse(view));
+        particleShader.setMat4("viewMatrixInverseTranspose", viewMatrixInverseTranspose);
 
         particleShader.setUint("HALF_PARTICLE_COUNT", PARTICLE_COUNT / 2);
 
